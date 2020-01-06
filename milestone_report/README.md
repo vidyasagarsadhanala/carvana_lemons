@@ -20,10 +20,6 @@ One of the challenges for an auto dealership in purchasing a used car at an auct
 Source: https://www.kaggle.com/c/DontGetKicked/data
 ![Kaggle](https://github.com/vidyasagarsadhanala/carvana_lemons/blob/master/images/kaggle_intro.PNG)
 
-
-
-
-
 Train set – 60%
 Test set – 40%
 
@@ -51,34 +47,50 @@ First, we input data & do data wrangling. We conduct the following steps to clea
  * Replace some data with special characters for engine characteristics like I 4, I-4 are same as I4.
  * Replace dates with datetime object and transformed them into numerical data by extracting Purch Month, Day and Year.
 5. Fix missing values
- * Plot scatter plot for columns with missing values and inspect the trend. Confirmed that most of the features are either linear or random to target. 
- * Fill missing values with mean.
-6. Drop unnecessary features as we only have 3818 data points so we might not want to have over 20 features.
- * Plot scatter plot of each feature vs. target, i,e, price and drop some unnecessary columns, i.e., columns that do not seem to affect price.
+ * Plot matrix plot from the missingno package for columns with missing values and inspect the trend.
+ * Confirmed that most of the features are either missing at random. 
+ * Fill missing values with mean for most features.
+![Missing](https://github.com/vidyasagarsadhanala/carvana_lemons/blob/master/images/missing.PNG)
+
 ## Notes based on analysis
-*  The target variable IsBadBuy a binary classification variable, meaning we are assigned a value of 1 if the car purchased in a Bad buy or 0 if a car is not a Bad buy (good buy).
+* The target variable IsBadBuy a binary classification variable, meaning we are assigned a value of 1 if the car purchased in a Bad buy or 0 if a car is not a Bad buy (good buy).
 * It is important to note that while doing this prediction we need to be careful about the excessive cost of predicting false negatives. This means that a dealership might think that this car is a good buy and think they would be able to sell it, however in reality this a Bad Buy and not sellable.
 * A false positive has a cost associated with it as well, if the purchase as classified as a Bad buy it is indeed a sellable car, then the dealership might lose the opportunity selling the used car and generating profit of it.
 
+## EDA Summary
+* The dataset does contain missing data values, but all features are of the correct data type.
+* The strongest positive correlations with the target features are: VehicleAge, VehOdo, WarrantyCost, VNZIP1.
+* The strongest negative correlations with the target features are: VehYear, MMRAcquisitionAuctionAveragePrice, MMRCurrentAuctionAveragePrice, and MMRCurrentAuctionCleanPrice.
+* The dataset is imbalanced with the majoriy of observations describing as Good Buys.
+* Few features are redundant for our analysis, namely: RefId, WheelTypeID, PurchDate, and VNST.
+
+
 ## Initial Findings
-During exploratory data analysis, I have analyzed following questions:
+During exploratory data analysis, analyzed following questions:
 
 1. Does Vehicle Age has a different distribution for Good buy vs Bad Buys?
-2. Does the Vehicle being sold online impact Good vs Bad Buys?
-3. What is the mean vehicle age for Good vs Bad Buys?
-4. Do Bad Buys have higher Warrant Costs?
-
-Initial findings are:
-
-1. The Vehicle Age by the target variable IsBadBuy seems to follow the same distribution as the non-bad buy purchases.
-![Question1]( https://github.com/vidyasagarsadhanala/carvana_lemons/blob/master/images/q1.PNG)
+- The Vehicle Age by the target variable IsBadBuy seems to follow the same distribution as the non-bad buy purchases.
+![Question1](https://github.com/vidyasagarsadhanala/carvana_lemons/blob/master/images/q1.PNG)
  
-2. Property-type-wise, most of the property type of Seattle listings are house and apartment.
- - Wallingford & First Hill have most number of listings whose property type is house.
- - First Hill & Belltown have most number of listings whose property type is apartment.
- - Over 13% of Seattle Airbnb listings are located in First Hill.
-3. In terms of bedrooms and bathrooms, 1 bedroom 1 bathroom Airbnbs which can accommodate 1 ~ 4 people are most common in Seattle.
- - Over 50% of Seattle Airbnb listing are of this type.
- - About 10% of them are located in First Hill.
- - For the rest of Airbnbs, not many of them can accommodate more than 10 people. In fact, only 1.3% of listings can accommodate 10 or more than 10 people, and other than First Hill, most of them are located in some suburban area.
+2. Does the Vehicle being sold online impact Good vs Bad Buys?
+- The percentage of vehicles selling online seems to be low across Good and Bad buys in this data set.
+- IsOnlineSale = 11.5%
+- Not IsOnlinebSale = 12.3%
+
+3. What is the mean vehicle age for Good vs Bad Buys?
+- The mean vehicle age seems to higher for bad buys than compared to good buys.
+- Avg Vehcile Age for Non Bad Buy: 4.1
+- Avg Vehcile Age for Bad Buy: 4.9
+
+4. Is the WarrantyCost high for Bad Buys?
+- The distribution of the WarrantyCost (showing KDE) seems to be lower for Bad Buys than Good Buys.
+![Question4](https://github.com/vidyasagarsadhanala/carvana_lemons/blob/master/images/q4.PNG)
+
+## Hypothesis Testing
+Based on the Warranty Costs for Good buys and Bad Buys, seen above, formulated the hypothesis below.
+- Null Hypothesis (H0) 			: WarrantyCost are no different between BadBuys and Good Buys
+- Alternative Hypothesis (HA) 	: WarrantyCosts are differnt between BadBuys and GoodBuys
+
+* Performed a T-test from scipy stats package to observe the difference is means for the two sames (Bad Buys and Good Buys).
+* The observed p-values are less than 0.05 threshold and we can reject the null hypothesis that the Warranty Costs for Bad Buys and Good Good Buys are similar.
 
